@@ -1,0 +1,66 @@
+#include <iostream>
+using namespace std;
+
+int* longestSubarrayWithSum(int arr[], int n, int target, int& resultSize) {
+    int* prefixSum = new int[n + 1];  
+    prefixSum[0] = 0;  // 
+    
+    
+    for (int i = 1; i <= n; ++i) {
+        prefixSum[i] = prefixSum[i - 1] + arr[i - 1];
+    }
+    
+    int maxLength = 0;
+    int startIndex = -1;
+
+    
+    for (int i = 0; i <= n; ++i) {
+        for (int j = i + 1; j <= n; ++j) {
+            if (prefixSum[j] - prefixSum[i] == target) {
+                if (j - i > maxLength) {
+                    maxLength = j - i;
+                    startIndex = i;
+                }
+            }
+        }
+    }
+
+    
+    if (maxLength == 0) {
+        resultSize = 0;
+        delete[] prefixSum;
+        return nullptr;
+    }
+
+    
+    int* result = new int[maxLength];
+    for (int i = 0; i < maxLength; ++i) {
+        result[i] = arr[startIndex + i];
+    }
+
+    resultSize = maxLength;
+    delete[] prefixSum;
+    return result;
+}
+
+int main() {
+    int arr[] = { 5, 6, -5, 5, 3, 5, 3, -2, 0 };
+    int target = 8;
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int resultSize = 0;
+    int* result = longestSubarrayWithSum(arr, n, target, resultSize);
+    
+    if (result != nullptr) {
+        cout << "Longest subarray with sum " << target << ": { ";
+        for (int i = 0; i < resultSize; ++i) {
+            cout << result[i] << " ";
+        }
+        cout << "}" << endl;
+        delete[] result;  
+    } else {
+        cout << "No subarray with the given sum found." << endl;
+    }
+
+    return 0;
+}
